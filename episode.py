@@ -1,26 +1,76 @@
 
-from utils import Webtoon,
+import os, requests
 from urllib.parse import urlencode
 
 class Episode:
-    def __init__(self,webtoon=Webtoon(),no='',title_id='',img_url='',title='',rating='',created_date=''):
+    def __init__(self,webtoon=None,no='',title_id='',thumbnail_url='',title='',rating='',created_date=''):
         self._webtoon = webtoon
         self._no = no
         self._title_id = title_id
-        self._img_url = img_url
+        self._thumbnail_url = thumbnail_url
         self._title = title
         self._rating = rating
         self._created_date = created_date
 
+        self.thumb_path = f'webtoon/{self.title_id}/{self.title_id}_thumbnail'
+        self.contents_dir = f'webtoon/{self.title_id}/{self.title_id}_images/{self.no}'
+
+    @property
+    def webtoon(self):
+        return self._webtoon
+
+    @property
+    def no(self):
+        return self._no
+
+    @property
+    def title_id(self):
+        return self._title_id
+
+    @property
+    def thumbnail_url(self):
+        return self._thumbnail_url
+
+    @property
+    def title(self):
+        return self._title
+
+    @property
+    def rating(self):
+        return self._rating
+
+    @property
+    def created_date(self):
+        return self._created_date
+
     @property
     def has_thumbnail(self):
-        path = f'./webtoon/{self.webtoon.title_id}/{self.webtoon.title_id}_thumbnail/{self.no}.jpg'
-        if os.path.exists(path):
-            return True
-        else:
-            return False
+        return os.path.exists(thumb_dir + f'/{self.no}.jpg')
 
-    def _save_images(self):
+    def save_all(self):
+        self.save_thumbnail()
+        self.save_images()
+
+    def save_thumbnail(self,force_update=False):
+        if not self.has_thumbnail or force_update==True:
+            i = 1
+            path = f'{self.thumb_dir}/{self.no}.jpg'
+            path_alt = f'{self.thumb_dir}/{self.no}_{i}.jpg'
+            os.makedirs(self.thumb_dir,exist_ok=True)
+            response = requests.get(self.thumbnail_url)
+            if not os.path.exists(path):
+                with open(path,'wb') as f:
+                    f.write(response.content)
+            else:
+                path_before = path
+                while os.path.exist(path_alt):
+                    path_before = path_alt
+                    i += 1
+                os.rename(path_before,path_alt)
+                with open(path,'wb') as f:
+                    f.write(response.content)
+
+    def save_images(self):
         episode_link_body = 'http://comic.naver.com/webtoon/detail.nhn?'
         params = {
             "titleId":self._title_id,
@@ -30,24 +80,18 @@ class Episode:
 
         response = requests.get(episode_link)
         soup = BeautifulSoup(response.text, 'lxml')
-        # 필요한 데이터들 (img_url, title, rating, created_date)추출
+
         contents_link_list = list()
-        img_div = soup.select_one('div.wt_viewer')   # class = 'viewList'인 '첫번째' <table> 태그 안의 html 반환
-        img_tags = img_div.find_all('img', recursive=False) # 그 안에서 모든 <tr> 태그의 html 반환. recursive=False 설정은 자식 태그만 반환
-        for img_tags in img_tags:
+        img_div = soup.select_one('div.wt_viewer')
+        img_tags = img_div.find_all('img', recursive=False)
+        for img_tag in img_tags:
             contents_link_list.append(img_tag.get('src'))
 
-        for url in contents_link_list:
-            # img에 대한 각 requests.get에는 url_contents가 Referer인 header가 필요
+        for index, url in enumerate(contents_link_list):
             headers = {'Referer': episode_link}
-            # requests.get요청을 보냄
             response = requests.get(url, headers=headers)
-            # 파일을 저장
-            with open(f'{self.image_dir}/{index + 1}.jpg', 'wb') as f:
+            with open(f'{self.contents_dir}/{index + 1}.jpg', 'wb') as f:
                 f.write(response.content)
 
-
-
-
-        headers = {'Referer': episode_link}
-        image_data = requests.get(image_file_url, headers=headers).content
+if __name__ == '__main__':
+    pass

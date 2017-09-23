@@ -1,8 +1,5 @@
-import requests, re, os, pickle
-from collections import namedtuple
-from bs4 import BeautifulSoup
-from urllib.parse import urlparse, parse_qs
-from utils import Episode, Webtoon, get_webtoon_episode_list, get_webtoon_list
+import requests, os, pickle
+from utils import Webtoon, get_webtoon_episode_list, get_webtoon_list
 from utils import html_head, html_body, html_bottom
 
 class NaverWebToonCrawlar():
@@ -102,6 +99,8 @@ class NaverWebToonCrawlar():
         return path
 
     def get_episode_detail(self, episode):
+        pass
+
 
 
 # html_body = html_body.format(
@@ -113,7 +112,7 @@ class NaverWebToonCrawlar():
 
 # 선천적 얼간이들 http://comic.naver.com/webtoon/list.nhn?title_id=697680&weekday=mon
 
-# nwc = NaverWebToonCrawlar()
+nwc = NaverWebToonCrawlar()
 
 
 # l = nwc.episode_list
