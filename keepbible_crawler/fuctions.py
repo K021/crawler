@@ -4,17 +4,37 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from variables import KEEPBIBLE_URL, BOOK_NAMES
+from variables import KEEPBIBLE_URL, BOOK_NAMES, PROJECT_DIR, BOOK_NAMES_ABBR
 from variables import Book, Verse, Chapter
 
 
 __all__ = (
+    'crawl_books_and_write',
     'crawl_books',
     'crawl_chapters',
     'crawl_verses',
     'consumed_time',
     'append_file',
 )
+
+
+def crawl_books_and_write(separately=True):
+    bible_info_dict = {
+        'bible_name': 'hkjv',
+        'book_id': 1,
+    }
+
+    for book_id in range(1, 67):
+        bible_info_dict['book_id'] = book_id
+        chapter_list = crawl_chapters(**bible_info_dict)
+
+        file_path = PROJECT_DIR + f'{BOOK_NAMES[book_id-1]}(흠정역).txt' if separately else PROJECT_DIR + '신구약(흠정역).txt'
+        for chapter in chapter_list:
+            for verse in chapter.verse_list:
+                line = f'{BOOK_NAMES_ABBR[book_id-1]}{chapter.number}:{verse.number} {verse.content}\n'
+                append_file(file_path, line)
+
+        print(f'phase#{book_id}')
 
 
 def crawl_books(bible_name='hkjv'):
@@ -108,10 +128,12 @@ def consumed_time(func):
 
 
 def append_file(file, string):
-    if isinstance(file, str):
-        with open(file, 'wt') as f:
+    if isinstance(file, str):  # file path 가 주어진 경우
+        with open(file, 'a') as f:
             f.seek(0, 2)
             f.write(string)
-    elif isinstance(file, io.TextIOBase):
+    elif isinstance(file, io.TextIOBase):  # text file object 인 경우
         file.seek(0, 2)
         file.write(string)
+    else:
+        raise ValueError('append_file 함수에는 file path 또는 text file object 만을 매개변수로 받습니다.')
