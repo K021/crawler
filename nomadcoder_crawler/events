@@ -1,0 +1,32 @@
+event: {id: "5bfff81552f8818c", channelId: "9053", personId: "5bffe4e0033f0a24", personType: "Veil",…}
+channelId: "9053"
+createdAt: 1543501845343
+expireAt: 1544106645339
+id: "5bfff81552f8818c"
+name: "PageView"
+personId: "5bffe4e0033f0a24"
+personType: "Veil"
+sysProperties: {title: "#0-2. Requirements | Nomad Coders",…}
+browser: "Chrome 70.0.3538"
+city: "Seoul"
+country: "KR"
+device: "Other"
+ip: "59.10.251.123"
+os: "Mac OS X 10.12.6"
+pluginKey: "8244da16-034b-4ea9-b76b-68d8fccc4561"
+referrer: ""
+sessionId: "5bffe4e00788edc3"
+title: "#0-2. Requirements | Nomad Coders"
+url: "https://academy.nomadcoders.co/courses/216935/lectures/3369665"
+sysProperty: {title: "#0-2. Requirements | Nomad Coders",…}
+browser: "Chrome 70.0.3538"
+city: "Seoul"
+country: "KR"
+device: "Other"
+ip: "59.10.251.123"
+os: "Mac OS X 10.12.6"
+pluginKey: "8244da16-034b-4ea9-b76b-68d8fccc4561"
+referrer: ""
+sessionId: "5bffe4e00788edc3"
+title: "#0-2. Requirements | Nomad Coders"
+url: "https://academy.nomadcoders.co/courses/216935/lectures/3369665"
